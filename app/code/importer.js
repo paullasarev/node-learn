@@ -1,11 +1,9 @@
 import DirWatcher from './dir-watcher';
 import { promisify } from 'util';
-import { readdir, stat, readFile } from 'fs';
+import { readdir, stat, readFile, readdirSync, statSync, readFileSync } from 'fs';
 import { resolve, parse } from 'path';
 
 const readFileP = promisify(readFile);
-
-const WATCH_DELAY = 3000;
 
 function filewalker(dir, done) {
   let results = [];
@@ -37,28 +35,66 @@ function filewalker(dir, done) {
   });
 };
 
-module.exports = class Importer {
-  import(path) {
-    console.log('import', path)
+function filewalkerSync(dir) {
+  let results = [];
+
+  readdirSync(dir).forEach((fileName) => {
+    const file = resolve(dir, fileName);
+    const stat = statSync(file);
+    if (stat && stat.isDirectory()) {
+        const res = filewalkerSync(file);
+        results = results.concat(res);
+    } else {
+        results.push(file);
+    }
+  });
+  
+  return results;
+};
+
+export default class Importer {
+  WATCH_DELAY = 3000;
+
+  watch(path) {
     return new Promise((resolve, reject) => {
       const watcher = new DirWatcher();
-      const emitter = watcher.watch(path, WATCH_DELAY);
-      emitter.on(watcher.DIR_CHANGE_EVENT, () => {
-        filewalker(path, (err, paths)=>{
-          if (err) {
-            reject(err);
-          } else {
-            //resolve(paths);
-            Promise.all(paths.map((file)=>readFileP(file))).then((contents)=>{
-              resolve(contents);
-            })
-          }
-        })
+      watcher.watch(path, this.WATCH_DELAY);
+      watcher.on(watcher.DIR_CHANGE_EVENT, () => {
+        watcher.close();
+        this.import(path).then(resolve);
+        // resolve(this.importSync(path))
+      })
+    })
+  }
+
+  import(path) {
+    return new Promise((resolve, reject) => {
+      filewalker(path, (err, paths) => {
+        if (err) {
+          reject(err);
+        } else {
+          Promise.all(paths.map((file)=>readFileP(file))).then((contents)=>{
+            resolve(this.makeResult(paths, contents));
+          })
+        }
       });
     });
   }
 
   importSync(path) {
+    const paths = filewalkerSync(path);
+    const contents = paths.map((file) => readFileSync(file));
+    return this.makeResult(paths, contents);
+  }
 
+  makeResult(paths, contents) {
+    const results = [];
+    for(let ind = 0; ind < paths.length; ++ind) {
+      results.push({
+        path: paths[ind],
+        content: contents[ind],
+      })
+    }
+    return results;
   }
 }

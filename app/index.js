@@ -4,7 +4,7 @@ const express = require('express');
 const morgan = require('morgan');
 const config = require("./config");
 const { User, Product } = require("./models");
-const Importer = require('./code/importer');
+const { Importer } = require('./code');
 
 const PORT = 8080;
 const HOST = '0.0.0.0';
@@ -14,7 +14,10 @@ const user = new User();
 const product = new Product();
 
 const imp = new Importer();
-imp.import('./data').then((res)=>{
+const res = imp.importSync('./data');
+console.log(res);
+
+imp.watch('./data').then((res)=>{
   console.log(res)
 })
 
