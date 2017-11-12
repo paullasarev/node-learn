@@ -6,6 +6,7 @@ import { IO } from './io';
 import { UpperCase } from './upper-case';
 import { CsvToJson } from './csv-to-json';
 import { CsvToJsonInPlace } from './csv-to-json-in-place';
+import { CssBundler } from './css-bundler';
 
 export class StreamsApp {
   constructor(argv) {
@@ -30,6 +31,11 @@ export class StreamsApp {
         command: 'csv-in-place <file>',
         describe:'csv to json to <file>.json',
         handler: this.register.bind(this, CsvToJsonInPlace),
+      })
+      .command({
+        command: 'css-bundler <path>',
+        describe:'css bundler for all css in <path>',
+        handler: this.register.bind(this, CssBundler),
       })
       .demandCommand(1, 1)
       .help()
