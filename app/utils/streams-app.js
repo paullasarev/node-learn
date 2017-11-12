@@ -4,6 +4,7 @@ import { autobind } from 'core-decorators';
 
 import { IO } from './io';
 import { UpperCase } from './upper-case';
+import { CsvToJson } from './csv-to-json';
 
 export class StreamsApp {
   constructor(argv) {
@@ -18,6 +19,11 @@ export class StreamsApp {
         command: 'upper-case',
         describe: 'upper case the pipe from stdin to stdout',
         handler: this.register.bind(this, UpperCase),
+      })
+      .command({
+        command: 'csv <file>',
+        describe:'csv to json to stdout',
+        handler: this.register.bind(this, CsvToJson),
       })
       .demandCommand(1, 1)
       .help()

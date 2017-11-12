@@ -1,5 +1,4 @@
 import through2 from 'through2';
-import { autobind } from 'core-decorators';
 
 function upper(chunk, enc, callback) {
   this.push(chunk.toString().toUpperCase())
