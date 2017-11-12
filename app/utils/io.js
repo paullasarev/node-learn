@@ -6,8 +6,7 @@ export class IO {
   }
 
   run() {
-    console.log('io', this.file);
-    const read = fs.createReadStream(this.file);
-    read.pipe(process.stdout);
+    fs.createReadStream(this.file)
+      .pipe(process.stdout);
   }
 }

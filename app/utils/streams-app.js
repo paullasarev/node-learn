@@ -3,6 +3,7 @@ import { isEmpty, clone } from 'lodash';
 import { autobind } from 'core-decorators';
 
 import { IO } from './io';
+import { UpperCase } from './upper-case';
 
 export class StreamsApp {
   constructor(argv) {
@@ -16,7 +17,7 @@ export class StreamsApp {
       .command({
         command: 'upper-case',
         describe: 'upper case the pipe from stdin to stdout',
-        handler: this.notImplemented,
+        handler: this.register.bind(this, UpperCase),
       })
       .demandCommand(1, 1)
       .help()
