@@ -1,5 +1,8 @@
 import yargs from 'yargs';
 import { isEmpty, clone } from 'lodash';
+import { autobind } from 'core-decorators';
+
+import { IO } from './io';
 
 export class StreamsApp {
   constructor(argv) {
@@ -8,7 +11,7 @@ export class StreamsApp {
       .command({
         command: 'io <file>',
         describe:'io from file to stdout',
-        handler: this.notImplemented,
+        handler: this.register.bind(this, IO),
       })
       .command({
         command: 'upper-case',
@@ -20,16 +23,23 @@ export class StreamsApp {
       .argv;
   }
 
+  run() {
+    if (this.handler) {
+      this.handler.run();
+    }
+  }
+
+  register(Handler, argv) {
+    this.handler = new Handler(argv);
+  }
+
+  @autobind
   notImplemented(argv) {
     console.log('command is not implemented', argv)
   }
 
   get argv() {
     return this.argv_;
-  }
-
-  get noArgs() {
-    return !this.argv_.length; 
   }
 
 }
