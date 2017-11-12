@@ -34,9 +34,4 @@ export class CsvToJsonInPlace {
   onRename(err) {
     console.log('done', this.outFile);
   }
-
-  @autobind
-  onUnlink(err) {
-    console.log('done', err);
-  }
 }
