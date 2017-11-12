@@ -5,6 +5,7 @@ import { autobind } from 'core-decorators';
 import { IO } from './io';
 import { UpperCase } from './upper-case';
 import { CsvToJson } from './csv-to-json';
+import { CsvToJsonInPlace } from './csv-to-json-in-place';
 
 export class StreamsApp {
   constructor(argv) {
@@ -24,6 +25,11 @@ export class StreamsApp {
         command: 'csv <file>',
         describe:'csv to json to stdout',
         handler: this.register.bind(this, CsvToJson),
+      })
+      .command({
+        command: 'csv-in-place <file>',
+        describe:'csv to json to <file>.json',
+        handler: this.register.bind(this, CsvToJsonInPlace),
       })
       .demandCommand(1, 1)
       .help()
