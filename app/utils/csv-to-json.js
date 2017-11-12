@@ -1,7 +1,6 @@
 import fs from 'fs';
 import csv from 'csv-parser';
-import JSONStream from 'JSONStream';
-import through2 from 'through2';
+import toJson from './to-json';
 
 export class CsvToJson {
   constructor(argv) {
@@ -10,15 +9,8 @@ export class CsvToJson {
 
   run() {
     fs.createReadStream(this.file)
-      .pipe(csv())
-      // .pipe(through2({ objectMode: true }, function (chunk, enc, callback) {
-      //   this.push(JSON.stringify(chunk) + ',\n');
-      //   callback();
-      // }), function(chunk, enc, callback){
-      //   this.push("]\n");
-      // })
-      // .pipe(csv.stringify())
-      .pipe(JSONStream.stringify())
+      .pipe(csv())  
+      .pipe(toJson())
       .pipe(process.stdout);
   }
 }
