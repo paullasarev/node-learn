@@ -1,4 +1,5 @@
 require("babel-register");
+const _ = require("lodash");
 
 const express = require('express');
 const morgan = require('morgan');
@@ -35,6 +36,19 @@ router.get('/products', (req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(products, null, '  '));
+});
+
+router.get('/products/:id', (req, res) => {
+  const id = +req.params.id;
+  const el = _.find(products, {id});
+  if (el) {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(el, null, '  '));
+  } else {
+    res.statusCode = 401;
+    res.end();
+  }
 });
 
 app.use('/api', router)
