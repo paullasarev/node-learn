@@ -6,7 +6,7 @@ const config = require("./config");
 const { User, Product } = require("./models");
 const { Importer } = require('./code');
 
-const PORT = 8080;
+const PORT = 3000;
 const HOST = '0.0.0.0';
 
 console.log("app name:", config.App.name);
@@ -21,6 +21,8 @@ console.log("app name:", config.App.name);
 //   console.log(res)
 // })
 
+const products = require('./data/products.json');
+
 const app = express();
 app.use(morgan('tiny'));
 
@@ -29,7 +31,13 @@ router.get('/', (req, res) => {
   res.send('Hello world\n');
 });
 
-app.use('/', router)
+router.get('/products', (req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(products, null, '  '));
+});
+
+app.use('/api', router)
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 0,
+    "name": "Product 0",
+    "price": 30,
+    "description": "Product 1Lorem ipsum"
+  },
+  {
+    "id": 1,
+    "name": "Product 1",
+    "price": 20,
+    "description": "Product 1Lorem ipsum"
+  },
+  {
+    "id": 2,
+    "name": "Product 2",
+    "price": 30,
+    "description": "Product 1Lorem ipsum"
+  },
+  {
+    "id": 3,
+    "name": "Product 3",
+    "price": 30,
+    "description": "Product 1Lorem ipsum"
+  }
+]
