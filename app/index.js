@@ -6,6 +6,8 @@ const morgan = require('morgan');
 const config = require("./config");
 const { User, Product } = require("./models");
 const { Importer } = require('./code');
+const { parseQuery } = require('./middlewares/parse-query');
+const { parseCookies } = require('./middlewares/parse-cookies');
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
@@ -26,9 +28,12 @@ const products = require('./data/products.json');
 
 const app = express();
 app.use(morgan('tiny'));
+app.use(parseQuery);
+app.use(parseCookies);
 
 const router = express.Router();
 router.get('/', (req, res) => {
+  console.log(req.parsedQuery)
   res.send('Hello world\n');
 });
 
@@ -51,7 +56,7 @@ router.get('/products/:id', (req, res) => {
   }
 });
 
-app.use('/api', router)
+app.use('/api', router);
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
