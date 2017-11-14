@@ -2,7 +2,9 @@ require("babel-register");
 const _ = require("lodash");
 const express = require('express');
 const morgan = require('morgan');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const { Strategy: LocalStrategy } = require('passport-local');
 
 const config = require("./config");
 const { User, Product } = require("./models");
@@ -28,6 +30,31 @@ console.log("app name:", config.App.name);
 //   console.log(res)
 // })
 
+passport.use(new LocalStrategy({
+  usernameField: 'login', 
+  passwordField : 'password', 
+},
+  function(username, password, done) {
+    const el = _.find(users, {login: username, password});
+    console.log('LocalStrategy', username, password, el)
+    if (el) {
+      return done(null, el);
+    } else {
+      done(null, false)
+    } 
+  }
+));
+
+passport.serializeUser(function(user, done) {
+  console.log('serialize', user)
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  const el = _.find(users, {id});
+  console.log('deserialize', user, el)
+  done(null, el);
+});
 
 const app = express();
 app.use(morgan('tiny'));
@@ -35,6 +62,8 @@ app.use(parseQuery);
 app.use(parseCookies);
 app.use(auth);
 app.use(bodyParser.json());
+app.use(passport.initialize());
+app.use(passport.session());
 
 const router = express.Router();
 router.get('/', (req, res) => {
@@ -81,6 +110,8 @@ router.get('/users/:id', (req, res) => {
     res.end();
   }
 });
+
+router.post('/login', passport.authenticate('local'));
 
 router.post('/auth', (req, res) => {
   const {login, password} = req.body;
