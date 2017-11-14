@@ -1,6 +1,5 @@
 require("babel-register");
 const _ = require("lodash");
-var jwt = require('jsonwebtoken');
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser')
@@ -12,6 +11,7 @@ const { parseQuery } = require('./middlewares/parse-query');
 const { parseCookies } = require('./middlewares/parse-cookies');
 const products = require('./data/products.json');
 const users = require('./data/users.json');
+const { auth, createToken } = require('./middlewares/auth');
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
@@ -33,6 +33,7 @@ const app = express();
 app.use(morgan('tiny'));
 app.use(parseQuery);
 app.use(parseCookies);
+app.use(auth);
 app.use(bodyParser.json());
 
 const router = express.Router();
@@ -88,7 +89,7 @@ router.post('/auth', (req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     
-    const token = jwt.sign({ foo: 'bar' }, 'shhhhh');
+    const token = creteToken();
     
     const resp = {
       "code": 200,
