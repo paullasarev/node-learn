@@ -1,0 +1,23 @@
+[
+  {
+    "id": 0,
+    "name": "John Dow",
+    "login": "john",
+    "email": "john@example.com",
+    "password": "asdf"
+  },
+  {
+    "id": 0,
+    "name": "Nick Smith",
+    "login": "nick",
+    "email": "nick@example.com",
+    "password": "asdf"
+  },
+  {
+    "id": 0,
+    "name": "Barbara Leweis",
+    "login": "barbara",
+    "email": "barbara@example.com",
+    "password": "asdf"
+  }
+]

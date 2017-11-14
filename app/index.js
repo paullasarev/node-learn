@@ -1,13 +1,17 @@
 require("babel-register");
 const _ = require("lodash");
-
+var jwt = require('jsonwebtoken');
 const express = require('express');
 const morgan = require('morgan');
+const bodyParser = require('body-parser')
+
 const config = require("./config");
 const { User, Product } = require("./models");
 const { Importer } = require('./code');
 const { parseQuery } = require('./middlewares/parse-query');
 const { parseCookies } = require('./middlewares/parse-cookies');
+const products = require('./data/products.json');
+const users = require('./data/users.json');
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
@@ -24,12 +28,12 @@ console.log("app name:", config.App.name);
 //   console.log(res)
 // })
 
-const products = require('./data/products.json');
 
 const app = express();
 app.use(morgan('tiny'));
 app.use(parseQuery);
 app.use(parseCookies);
+app.use(bodyParser.json());
 
 const router = express.Router();
 router.get('/', (req, res) => {
@@ -55,6 +59,60 @@ router.get('/products/:id', (req, res) => {
     res.end();
   }
 });
+
+router.get('/users', (req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(users, null, '  '));
+});
+
+router.get('/users/:id', (req, res) => {
+  const id = +req.params.id;
+  const el = _.find(users, {id});
+  if (el) {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    const user = {...el};
+    user.password = undefined;
+    res.end(JSON.stringify(user, null, '  '));
+  } else {
+    res.statusCode = 401;
+    res.end();
+  }
+});
+
+router.post('/auth', (req, res) => {
+  const {login, password} = req.body;
+  const el = _.find(users, {login, password});
+  if (el) {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    
+    const token = jwt.sign({ foo: 'bar' }, 'shhhhh');
+    
+    const resp = {
+      "code": 200,
+      "message": "OK",
+      "data": {
+        "user": {
+          "email": el.email,
+          "username": el.name,
+          "login": login,
+        }
+      },
+      "token": token
+    };
+    res.end(JSON.stringify(resp, null, '  '));
+  } else {
+    res.statusCode = 404;
+    res.end({
+      "code": 404,
+      "message": "Not Found",
+      "data": {  }
+     });
+  }
+  
+})
 
 app.use('/api', router);
 
