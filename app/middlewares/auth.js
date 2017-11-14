@@ -18,7 +18,7 @@ export function auth(req, res, next) {
         return;
       }
       console.log('verified', url.path, decoded);
-      next();
+      //next();
     })
   } else {
     next();

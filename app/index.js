@@ -3,8 +3,8 @@ const _ = require("lodash");
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const passport = require('passport');
-const { Strategy: LocalStrategy } = require('passport-local');
+// const passport = require('passport');
+// const { Strategy: LocalStrategy } = require('passport-local');
 
 const config = require("./config");
 const { User, Product } = require("./models");
@@ -14,6 +14,7 @@ const { parseCookies } = require('./middlewares/parse-cookies');
 const products = require('./data/products.json');
 const users = require('./data/users.json');
 const { auth, createToken } = require('./middlewares/auth');
+const { passport, passwordAuthenticate, passwordInit } = require('./middlewares/passport');
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
@@ -30,31 +31,7 @@ console.log("app name:", config.App.name);
 //   console.log(res)
 // })
 
-passport.use(new LocalStrategy({
-  usernameField: 'login', 
-  passwordField : 'password', 
-},
-  function(username, password, done) {
-    const el = _.find(users, {login: username, password});
-    console.log('LocalStrategy', username, password, el)
-    if (el) {
-      return done(null, el);
-    } else {
-      done(null, false)
-    } 
-  }
-));
-
-passport.serializeUser(function(user, done) {
-  console.log('serialize', user)
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  const el = _.find(users, {id});
-  console.log('deserialize', user, el)
-  done(null, el);
-});
+passwordInit(users);
 
 const app = express();
 app.use(morgan('tiny'));
@@ -111,7 +88,7 @@ router.get('/users/:id', (req, res) => {
   }
 });
 
-router.post('/login', passport.authenticate('local'));
+router.post('/login', passwordAuthenticate());
 
 router.post('/auth', (req, res) => {
   const {login, password} = req.body;
