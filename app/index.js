@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 // const passport = require('passport');
 // const { Strategy: LocalStrategy } = require('passport-local');
 
-const config = require("./config");
+//const config = require("./config");
 const { User, Product } = require("./models");
 const { Importer } = require('./code');
 const { parseQuery } = require('./middlewares/parse-query');
@@ -19,7 +19,7 @@ const { passport, passwordAuthenticate, passwordInit } = require('./middlewares/
 const PORT = 3000;
 const HOST = '0.0.0.0';
 
-console.log("app name:", config.App.name);
+//console.log("app name:", config.App.name);
 // const user = new User();
 // const product = new Product();
 
@@ -35,12 +35,12 @@ passwordInit(users);
 
 const app = express();
 app.use(morgan('tiny'));
-app.use(parseQuery);
-app.use(parseCookies);
+// app.use(parseQuery);
+// app.use(parseCookies);
 app.use(auth);
 app.use(bodyParser.json());
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 const router = express.Router();
 router.get('/', (req, res) => {
@@ -49,12 +49,17 @@ router.get('/', (req, res) => {
 });
 
 router.get('/products', (req, res) => {
+  console.log('products1', req.params)
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(products, null, '  '));
+  //res.end(JSON.stringify(products, null, '  '));
+  Product.findAll().then(products => {
+    res.end(JSON.stringify(products, null, '  '));
+  })
 });
 
 router.get('/products/:id', (req, res) => {
+  console.log('products2', req.params)
   const id = +req.params.id;
   const el = _.find(products, {id});
   if (el) {
