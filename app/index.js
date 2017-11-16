@@ -53,44 +53,89 @@ router.get('/products', (req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
   //res.end(JSON.stringify(products, null, '  '));
-  Product.findAll().then(products => {
-    res.end(JSON.stringify(products, null, '  '));
+  Product.findAll().then(data => {
+    res.end(JSON.stringify(data, null, '  '));
   })
 });
 
 router.get('/products/:id', (req, res) => {
   console.log('products2', req.params)
-  const id = +req.params.id;
-  const el = _.find(products, {id});
-  if (el) {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(el, null, '  '));
-  } else {
-    res.statusCode = 401;
-    res.end();
-  }
+  const id = req.params.id;
+  // const id = +req.params.id;
+  // const el = _.find(products, {id});
+  // if (el) {
+  //   res.statusCode = 200;
+  //   res.setHeader('Content-Type', 'application/json');
+  //   res.end(JSON.stringify(el, null, '  '));
+  // } else {
+  //   res.statusCode = 401;
+  //   res.end();
+  // }
+  Product.findById(id)
+    .then(data => {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(data, null, '  '));
+    })
+    .catch(err => {
+      res.statusCode = 401;
+      res.end();
+    })
 });
+
+router.post('/products', (req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  //res.end(JSON.stringify(products, null, '  '));
+  Product.create(req.body)
+  .then(data => {
+      res.end(JSON.stringify(data, null, '  '));
+  })
+  .catch(err => {
+    res.statusCode = 400;
+    res.end(err);
+  })
+});
+
 
 router.get('/users', (req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(users, null, '  '));
+  // res.end(JSON.stringify(users, null, '  '));
+  User.findAll({ attributes: {
+      exclude: ['password']
+    }})
+  .then(data => {
+    res.end(JSON.stringify(data, null, '  '));
+  })
 });
 
 router.get('/users/:id', (req, res) => {
-  const id = +req.params.id;
-  const el = _.find(users, {id});
-  if (el) {
+  const id = req.params.id;
+  Product.findById(id, { attributes: {
+    exclude: ['password']
+  }})
+  .then(data => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    const user = {...el};
-    user.password = undefined;
-    res.end(JSON.stringify(user, null, '  '));
-  } else {
+    res.end(JSON.stringify(data, null, '  '));
+  })
+  .catch(err => {
     res.statusCode = 401;
     res.end();
-  }
+  })
+// const id = +req.params.id;
+  // const el = _.find(users, {id});
+  // if (el) {
+  //   res.statusCode = 200;
+  //   res.setHeader('Content-Type', 'application/json');
+  //   const user = {...el};
+  //   user.password = undefined;
+  //   res.end(JSON.stringify(user, null, '  '));
+  // } else {
+  //   res.statusCode = 401;
+  //   res.end();
+  // }
 });
 
 router.post('/login', passwordAuthenticate());

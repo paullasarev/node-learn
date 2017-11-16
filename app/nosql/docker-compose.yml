@@ -1,0 +1,23 @@
+version: '3.1'
+
+services:
+
+    mongo:
+        image: mongo
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: example
+            POSTGRES_USER: postgres
+        ports:
+            - 27017:27017
+    
+    admin:
+        links:
+            - mongo:mongo
+        image: mongo-express
+        restart: always
+        environment:
+            ME_CONFIG_MONGODB_SERVER: mongo
+            ME_CONFIG_MONGODB_PORT: 27017
+        ports:
+          - "8081:8081"
