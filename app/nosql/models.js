@@ -20,6 +20,20 @@ const productSchema = new mongoose.Schema({
 export const Product = mongoose.model('Product', productSchema);
 
 
+const locationSchema = new mongoose.Schema({
+  lat: Number,
+  long: Number,
+});
+
+const citySchema = new mongoose.Schema({
+  name: String,
+  country: String,
+  capital: Boolean,
+  location: locationSchema,
+});
+
+export const City = mongoose.model('City', citySchema);
+
 
 export function connectDb(uri) {
   console.log('connect to', uri)
