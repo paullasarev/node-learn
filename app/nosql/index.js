@@ -6,10 +6,14 @@ const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const assert = require('assert');
 
+// const mongoose = require('mongoose');
+const { connectDb, User } = require('./models');
+const { dbUrl } = require('./config');
+
 const PORT = 3000;
 const HOST = '0.0.0.0';
 
-const dbUrl = 'mongodb://localhost:27017/learn';
+// const dbUrl = 'mongodb://localhost:27017/learn';
 
 var db;
 
@@ -67,16 +71,16 @@ router.get('/', (req, res) => {
 // });
 
 
-// router.get('/users', (req, res) => {
-//   res.statusCode = 200;
-//   res.setHeader('Content-Type', 'application/json');
-//   User.findAll({ attributes: {
-//       exclude: ['password']
-//     }})
-//   .then(data => {
-//     res.end(JSON.stringify(data, null, '  '));
-//   })
-// });
+router.get('/users', (req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  User.find({ attributes: {
+      exclude: ['password']
+    }})
+  .then(data => {
+    res.end(JSON.stringify(data, null, '  '));
+  })
+});
 
 // router.get('/users/:id', (req, res) => {
 //   const id = req.params.id;
@@ -97,16 +101,27 @@ router.get('/', (req, res) => {
 
 app.use('/api', router);
 
+connectDb(dbUrl)
+  .then(()=>{
+    console.log("Connected correctly to server");
+    app.listen(PORT, HOST);
+    console.log(`Running on http://${HOST}:${PORT}`);
+  })
+  .catch((err)=>{
+    console.log(err);
+  })
+;
 
-MongoClient.connect(dbUrl, function(err, mongodb) {
-  assert.equal(null, err);
-  db = mongodb;
-  console.log("Connected correctly to server");
+
+// MongoClient.connect(dbUrl, function(err, mongodb) {
+//   assert.equal(null, err);
+//   db = mongodb;
+//   console.log("Connected correctly to server");
   
-  app.listen(PORT, HOST);
-  console.log(`Running on http://${HOST}:${PORT}`);
+//   app.listen(PORT, HOST);
+//   console.log(`Running on http://${HOST}:${PORT}`);
    
-  // db.close();
-});
+//   // db.close();
+// });
 
 
