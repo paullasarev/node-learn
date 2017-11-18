@@ -19,6 +19,15 @@ const productSchema = new mongoose.Schema({
 
 export const Product = mongoose.model('Product', productSchema);
 
+const reviewSchema = new mongoose.Schema({
+  user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+  },
+  review: String,
+});
+
+export const Review = mongoose.model("Review", reviewSchema);
 
 const locationSchema = new mongoose.Schema({
   lat: Number,

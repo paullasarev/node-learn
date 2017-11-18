@@ -1,16 +1,18 @@
 require("babel-register");
 
 // const mongoose = require('mongoose');
-const { connectDb, disconnectDb, User, Product, City } = require('./models');
+const { connectDb, disconnectDb, User, Product, Review, City } = require('./models');
 const { dbUrl } = require('./config');
 
 const users = require('../data/users.json');
 const products = require('../data/products.json');
 const cities = require('../data/cities.json');
+const reviews = require('../data/reviews.json');
 
 connectDb(dbUrl)
   .then(seedUsers)
   .then(seedProducts)
+  .then(seedReviews)
   .then(seedCities)
   .catch((err)=>{
     console.log('error', err);
@@ -80,6 +82,27 @@ function seedProducts() {
   })
   .then((count)=>{
     console.log('Product count:', count);
+  })
+}
+
+function seedReviews() {
+  return Promise.resolve()
+  .then(()=>{
+    console.log('remove Review')
+    return Review
+      .remove({})
+      .exec()
+  })
+  .then(()=>{
+    console.log('insert Review')
+    return Review
+      .insertMany(reviews)
+  })
+  .then(()=>{
+    return Review.count();
+  })
+  .then((count)=>{
+    console.log('Review count:', count);
   })
 }
 
