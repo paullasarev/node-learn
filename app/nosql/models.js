@@ -20,11 +20,15 @@ const productSchema = new mongoose.Schema({
 export const Product = mongoose.model('Product', productSchema);
 
 const reviewSchema = new mongoose.Schema({
-  user: {
+  product: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'Product'
   },
-  review: String,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+},
+review: String,
 });
 
 export const Review = mongoose.model("Review", reviewSchema);

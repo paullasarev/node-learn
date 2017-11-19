@@ -1,20 +1,20 @@
 [
   {
-    "id": 0,
+    "_id": "5a1002576a54043ee0ca1c87",
     "name": "John Dow",
     "login": "john",
     "email": "john@example.com",
     "password": "asdf"
   },
   {
-    "id": 0,
+    "_id": "5a1002576a54043ee0ca1c88",
     "name": "Nick Smith",
     "login": "nick",
     "email": "nick@example.com",
     "password": "asdf"
   },
   {
-    "id": 0,
+    "_id": "5a1002576a54043ee0ca1c89",
     "name": "Barbara Leweis",
     "login": "barbara",
     "email": "barbara@example.com",

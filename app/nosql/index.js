@@ -62,7 +62,9 @@ router.get('/products/:id/reviews', (req, res) => {
     .then(data => {
       console.log('product:', data._id)
       return (Review
-        .find({user: data._id})
+        .find({product: data._id})
+        .populate('user')
+        .populate('product')
       );
     })
     .then(data => {
